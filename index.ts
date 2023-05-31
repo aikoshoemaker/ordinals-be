@@ -4,6 +4,7 @@ import fetch from 'node-fetch';
 import fs from 'fs';
 import { RAW, RES } from './utils/interface.js';
 import { readAddresses, getBalance } from './utils/func.js';
+import { encryptData, decryptData } from './utils/crypt.js';
 
 dotenv.config();
 
@@ -112,16 +113,29 @@ app.get('/get-all', (req, res) => {
 });
 
 app.get('/test', async (req, res) => {
-  const addresses = readAddresses();
+  try {
+    const addresses = readAddresses();
 
-  const address = addresses[0];
+    const address = addresses[0];
+    console.log({ address });
 
-  const base64 = btoa(JSON.stringify(address));
-  console.log({ base64 });
+    const base64data = btoa(JSON.stringify(address));
+    console.log({ base64data });
 
-  const parseBack = JSON.parse(atob(base64));
-  console.log({ parseBack });
-  res.json({ parseBack });
+    const enc = encryptData(base64data);
+    console.log({ enc });
+
+    const dect = decryptData(enc);
+
+    console.log('decrypt = ', dect);
+
+    console.log('parse to json = ', atob(dect));
+
+    res.json({ base64: base64data, encr: enc, dect: dect });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ error });
+  }
 });
 
 app.listen(8000, function () {
