@@ -2,9 +2,10 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 import fetch from 'node-fetch';
 import fs from 'fs';
-import { RAW, RES } from './utils/interface.js';
-import { readAddresses, getBalance } from './utils/func.js';
+import { RAW } from './utils/interface.js';
+import { readAddresses, getBalance, genAddress } from './utils/func.js';
 import { encryptData, decryptData } from './utils/crypt.js';
+import { router as paymentRouter } from './router/payment.js';
 
 dotenv.config();
 
@@ -12,6 +13,8 @@ const URL = process.env.URL_ENDPOINT;
 const BLOCK_KEY = process.env.BLOCK_KEY;
 
 const app = express();
+
+app.use('/payment', paymentRouter);
 
 app.get('/', (req, res) => {
   res.send('Hello express TS');
@@ -24,15 +27,7 @@ app.get('/gen-address/:num', async (req, res) => {
     const raw_data: RAW[] = readAddresses();
 
     for (let i = 0; i < num; i++) {
-      const fetchAddress = await fetch(URL + '/addrs?token=' + BLOCK_KEY, {
-        method: 'POST',
-      });
-
-      if (!fetchAddress) {
-        throw new Error('Something went wrong');
-      }
-
-      const data = (await fetchAddress.json()) as RES;
+      const data = await genAddress();
 
       console.log({ data });
 

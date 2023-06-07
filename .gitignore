@@ -2,3 +2,5 @@
 .env
 /secret
 genRans.ts
+rest.ps1
+curl.ts
