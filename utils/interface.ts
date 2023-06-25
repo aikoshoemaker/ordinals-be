@@ -1,3 +1,78 @@
+interface Input {
+  prev_hash: string;
+  output_index: number;
+  script: string;
+  output_value: number;
+  sequence: number;
+  addresses: string[];
+  script_type: string;
+  age: number;
+}
+
+interface Output {
+  value: number;
+  script: string;
+  addresses: string[];
+  script_type: string;
+}
+
+export interface IExtractReceipt {
+  block_hash: string;
+  block_height: number;
+  block_index: number;
+  hash: string;
+  addresses: string[];
+  total: number;
+  fees: number;
+  size: number;
+  vsize: number;
+  preference: string;
+  relayed_by: string;
+  confirmed: string;
+  received: string;
+  ver: number;
+  double_spend: boolean;
+  vin_sz: number;
+  vout_sz: number;
+  confirmations: number;
+  inputs: Input[];
+  outputs: Output[];
+}
+
+interface Input {
+  prev_hash: string;
+  output_value: number;
+  addresses: string[];
+  script: string;
+  script_type: string;
+}
+
+interface Output {
+  value: number;
+  script: string;
+  addresses: string[];
+  script_type: string;
+}
+
+interface Transaction {
+  block_height: number;
+  hash: string;
+  addresses: string[];
+  total: number;
+  fees: number;
+  size: number;
+  vsize: number;
+  preference: string;
+  confirmations: number;
+  inputs: Input[];
+  outputs: Output[];
+}
+
+export interface IReturnTx {
+  tx: Transaction;
+  tosign: string[];
+}
+
 export interface RAW {
   address: string;
   pub: string;
@@ -42,4 +117,18 @@ export interface IEventData {
   address: string;
 }
 
+export interface IReceipt {
+  inputs: {
+    addresses: string[];
+  }[];
+  outputs: {
+    addresses: string[];
+    value: number;
+  }[];
+}
+
+export type IFetchSingleHook = EventSubmit & IEventData;
+
 export type balanceType = { address: string; balance: string };
+export type singleIdType = { id_event: string } | null;
+export type TxsType = SubmitPayment & InterPayment;
