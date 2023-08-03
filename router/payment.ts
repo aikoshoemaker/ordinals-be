@@ -13,7 +13,7 @@ import fetch from 'node-fetch';
 import { blockFetch, genAddress, sendQr, submitEvent } from '../utils/func.js';
 import { encryptData } from '../utils/crypt.js';
 import { supabase } from '../utils/supabase.js';
-import { exec } from 'child_process';
+import { getSign, send_signature, submit_new_tx } from '../utils/controller.js';
 dotenv.config();
 
 export const router = express.Router();
@@ -137,31 +137,20 @@ router.get('/list_all', async (req, res) => {
   }
 });
 
-router.get('/send_btc', async (req, res) => {
-  // const receipt = req.body as TxsType;
-  const workingDir = 'M:/Project/btcutils/signer';
-  const command =
-    'signer.exe 3bbbf13032f976bf65eaf062a9b5d90fecd4f68b16b7d77b8a440cef51836df4 702e5891e49cc7adcbe739bcd6cd7ccc07cbe1117b9dfa16d86a92c82d43e133';
+router.post('/send_btc', async (req, res) => {
+  const reqBody = req.body as TxsType;
+  console.log({ reqBody });
+  try {
+    const receipt = await submit_new_tx(reqBody);
+    const { tosign } = receipt;
+    const signature = await getSign(tosign[0]);
+    const data_resp = await send_signature(receipt, signature);
 
-  exec(command, { cwd: workingDir }, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Error executing command: ${error}`);
-      throw new Error('error execut');
-    }
-
-    // Command executed successfully
-    console.log('Command executed successfully.');
-    console.log('Command output:');
-    console.log({ stdout });
-    res.send(stdout);
-
-    if (stderr) {
-      console.error('Command error:');
-      console.error(stderr);
-
-      throw new Error('error STDERR execut');
-    }
-  });
+    res.status(200).json({ data_resp });
+  } catch (err) {
+    console.log('errors submit ', err);
+    throw new Error('error global send_btc');
+  }
 });
 
 router.post('/transact/new', async (req, res) => {

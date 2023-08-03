@@ -2,7 +2,7 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 import fetch from 'node-fetch';
 import fs from 'fs';
-import { readAddresses, getBalance, genAddress } from './utils/func.js';
+import { readAddresses, getBalance } from './utils/func.js';
 import { encryptData, decryptData } from './utils/crypt.js';
 import { router as paymentRouter } from './router/payment.js';
 import { router as callbackRouter } from './router/callback.js';
@@ -160,6 +160,21 @@ app.get('/fund_address/:addr/:amount', async (req, res) => {
     res.status(200).json({ resp });
   } catch (error) {
     res.status(404).send('error');
+  }
+});
+
+app.get('/test_fetch', async (req, res) => {
+  try {
+    const resp = await fetch('https://dummyjson.com/products/1');
+
+    const data = await resp.json();
+
+    console.log({ data });
+
+    res.json(data);
+  } catch (err) {
+    console.log(err);
+    throw new Error('failed test');
   }
 });
 

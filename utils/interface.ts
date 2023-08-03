@@ -39,21 +39,6 @@ export interface IExtractReceipt {
   outputs: Output[];
 }
 
-interface Input {
-  prev_hash: string;
-  output_value: number;
-  addresses: string[];
-  script: string;
-  script_type: string;
-}
-
-interface Output {
-  value: number;
-  script: string;
-  addresses: string[];
-  script_type: string;
-}
-
 interface Transaction {
   block_height: number;
   hash: string;
@@ -71,6 +56,12 @@ interface Transaction {
 export interface IReturnTx {
   tx: Transaction;
   tosign: string[];
+  errors?: unknown;
+}
+
+export interface ISendSig extends IReturnTx {
+  pubkeys: string[];
+  signatures: string[];
 }
 
 export interface RAW {
